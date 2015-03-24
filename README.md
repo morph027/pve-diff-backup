@@ -43,6 +43,29 @@ Restarting PVE Daemon: pvedaemon.
 
 This is important part. If you will ever want to upgrade your Proxmox installation (by apt-get dist-upgrade or apt-get upgrade) ALWAYS revert/uninstall patches. You will still be able to apply them afterwards.
 
+### helpful bash snippet
+
+We've put this bash snippet into all of our pve hosts _.bashrc_ file to prevent accidentally triggered updates
+
+```
+apt-get() {
+  case $1 in
+    "upgrade"|"dist-upgrade")
+      command apt-get --just-print upgrade | grep -E 'pve-manager|qemu-server|libpve-storage-perl' >/dev/null # see, if there any pve related updates
+      if [ $? -eq 0 ]; then
+        echo -ne "\n\e[1;31m\t!! WARNING !!\n\n\tPlease make sure to revert pve-diff-backup patches before upgrading PVE related packages!\e[0m\n\n"
+      else
+        command apt-get "$@"
+      fi
+    ;;
+
+    *)
+      command apt-get "$@"
+    ;;
+  esac
+}
+```
+
 ## Is it stable?
 
 Yes, it is. This extensions uses xdelta3 as differential backup tool, which proven to be well tested and stable. I use it for about 9 months on 4 different Proxmox based servers. No problems so far.
