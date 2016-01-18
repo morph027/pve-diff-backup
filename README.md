@@ -1,3 +1,7 @@
+# !DEPRECATED!
+
+As i'm now happily using ZFS with all it's nifty features, this one gets no love anymore...
+
 # pve-diff-backup
 Proxmox VE differential backups
 
